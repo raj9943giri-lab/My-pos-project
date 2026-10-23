@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- POS app theme: white surfaces, green bars, no action bar -->
+    <style name="Theme.POS" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/green_800</item>
+        <item name="colorPrimaryDark">@color/green_900</item>
+        <item name="colorAccent">@color/teal_400</item>
+        <item name="android:statusBarColor">@color/green_800</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+    </style>
+</resources>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#046A4A">
+<title>शर्मा किराना — ऑनलाइन स्टोर (डेमो)</title>
+<style>
+:root{--g700:#048A56;--g800:#046A4A;--g50:#ECFDF5;--ink:#0F172A;--muted:#64748B;--line:#E2E8F0;--bg:#F4F7F6;--amber:#F59E0B;--red:#DC2626;--safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px);}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;overscroll-behavior:none}
+body{font-family:-apple-system,'Segoe UI',Roboto,'Noto Sans Devanagari',sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.6;padding-bottom:calc(90px + var(--safe-b))}
+.head{background:linear-gradient(135deg,#048A56,#044A33);color:#fff;padding:calc(14px + var(--safe-t)) 16px 18px;border-radius:0 0 22px 22px}
+.srow{display:flex;gap:12px;align-items:center}
+.logo{width:56px;height:56px;border-radius:18px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;font-size:28px}
+.badge{display:inline-flex;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(255,255,255,.2)}
+.wrap{padding:14px 16px}
+.search{width:100%;min-height:50px;border:1.5px solid var(--line);border-radius:14px;padding:10px 14px;font-size:16px;font-family:inherit;background:#fff;outline:none}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:12px 16px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:8px 15px;border-radius:999px;background:#fff;box-shadow:0 0 0 1px var(--line);border:none;font-size:14px;font-weight:600;color:var(--ink);font-family:inherit}
+.chip.on{background:var(--g700);color:#fff}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px}
+@media(min-width:640px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:900px){.grid{grid-template-columns:repeat(4,1fr)}}
+.pcard{background:#fff;border-radius:16px;box-shadow:0 1px 2px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.06);padding:12px;border:none;text-align:left;font-family:inherit;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.pcard .em{font-size:34px;text-align:center;padding:8px 0}
+.pcard .nm{font-weight:700;font-size:14.5px;line-height:1.35}
+.pcard .un{font-size:12px;color:var(--muted)}
+.pcard .pr{font-weight:800;margin-top:4px;display:flex;gap:8px;align-items:baseline}
+.pcard .mrp{font-size:12px;color:var(--muted);text-decoration:line-through}
+.pcard .off{font-size:11px;color:var(--g800);font-weight:700}
+.empty{text-align:center;padding:44px 30px;color:var(--muted)}
+.empty .t{font-weight:800;font-size:17px;color:var(--ink)}
+.cartbar{position:fixed;left:16px;right:16px;bottom:calc(12px + var(--safe-b));background:var(--g700);color:#fff;border-radius:16px;border:none;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;font-size:16px;font-weight:700;font-family:inherit;box-shadow:0 12px 24px rgba(4,138,86,.4);cursor:pointer}
+.cartbar .c{background:rgba(255,255,255,.25);border-radius:999px;padding:2px 10px;font-size:13px}
+.sheet{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:50;display:flex;align-items:flex-end}
+.sheet .in{background:#fff;border-radius:22px 22px 0 0;width:100%;max-height:88vh;overflow-y:auto;padding:8px 18px calc(20px + var(--safe-b));animation:up .2s ease-out}
+@keyframes up{from{transform:translateY(60px);opacity:.5}to{transform:none;opacity:1}}
+.stepper{display:inline-flex;align-items:center;background:var(--bg);border-radius:12px;overflow:hidden}
+.stepper button{width:46px;height:46px;border:none;background:none;font-size:22px;font-weight:700;color:var(--g800)}
+.stepper .qv{min-width:36px;text-align:center;font-weight:800}
+.btn{border:none;border-radius:14px;min-height:52px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;background:var(--g700);color:#fff}
+.btn.soft{background:var(--g50);color:var(--g800)}
+.btn:disabled{opacity:.5}
+.f{margin:12px 0}
+.f label{display:block;font-size:13.5px;font-weight:700;color:#334155;margin-bottom:6px}
+.f input,.f textarea{width:100%;min-height:50px;border:1.5px solid var(--line);border-radius:14px;padding:11px 14px;font-size:16px;font-family:inherit;outline:none}
+.f input:focus{border-color:var(--g700)}
+.f .msg{font-size:12.5px;color:var(--red);display:none}.f.err .msg{display:block}.f.err input{border-color:var(--red)}
+.toast{position:fixed;left:50%;bottom:calc(100px + var(--safe-b));transform:translateX(-50%) translateY(14px);background:#0F172A;color:#fff;padding:12px 18px;border-radius:14px;font-size:14.5px;font-weight:600;opacity:0;transition:.2s;z-index:99}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.foot{text-align:center;color:var(--muted);font-size:12px;padding:24px 0 10px}
+.foot a{color:var(--g800);font-weight:700;text-decoration:none}
+.succ{background:#fff;border-radius:20px;margin:40px 16px;padding:28px 20px;text-align:center;box-shadow:0 1px 2px rgba(15,23,42,.06),0 8px 24px rgba(15,23,42,.06)}
+.succ .tick{width:72px;height:72px;border-radius:50%;background:var(--g50);color:var(--g800);display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 12px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+'use strict';
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function money(n){n=Number(n)||0;return '₹'+n.toLocaleString('en-IN');}
+var SEED={
+ profile:{name:'शर्मा किराना स्टोर',emoji:'🏪',rating:4.8,about:'ताज़ा किराना सामान, फल और डेयरी एक ही जगह।',open:'07:00',close:'22:00',addr:'मुख्य बाज़ार, मेन रोड, गाज़ीपुर, उ.प्र.'},
+ delivery:{on:true,fee:20,freeAt:499},
+ cats:[{name:'सभी'},{name:'किराना',emoji:'🧺'},{name:'डेयरी',emoji:'🥛'},{name:'फल-सब्जी',emoji:'🍅'},{name:'स्नैक्स',emoji:'🍪'}],
+ products:[
+  {id:'p1',name:'आटा (चक्की फ्रेश)',cat:'किराना',unit:'1 किलो',price:45,mrp:48,stock:23},
+  {id:'p2',name:'चीनी (चेकी)',cat:'किराना',unit:'1 किलो',price:43,mrp:45,stock:40},
+  {id:'p3',name:'सरसों तेल',cat:'किराना',unit:'1 लीटर',price:150,mrp:165,stock:12},
+  {id:'p4',name:'चाय पत्ती',cat:'किराना',unit:'250 ग्राम',price:120,mrp:135,stock:8},
+  {id:'p5',name:'बेसन',cat:'किराना',unit:'500 ग्राम',price:65,mrp:70,stock:15},
+  {id:'p6',name:'नमक (आयोडीन)',cat:'किराना',unit:'1 किलो',price:22,mrp:24,stock:30},
+  {id:'p7',name:'दूध पैकेट',cat:'डेयरी',unit:'500 एमएल',price:30,mrp:32,stock:0},
+  {id:'p8',name:'पनीर (फ्रेश)',cat:'डेयरी',unit:'200 ग्राम',price:85,mrp:92,stock:9},
+  {id:'p9',name:'दही (मलाईदार)',cat:'डेयरी',unit:'400 ग्राम',price:45,mrp:50,stock:6},
+  {id:'p10',name:'टमाटर',cat:'फल-सब्जी',unit:'1 किलो',price:30,mrp:35,stock:50},
+  {id:'p11',name:'अंगूर (हरा)',cat:'फल-सब्जी',unit:'1 किलो',price:90,mrp:110,stock:14},
+  {id:'p12',name:'बिस्किट (सुपचाइना)',cat:'स्नैक्स',unit:'168 ग्राम',price:35,mrp:40,stock:6}
+ ]};
+function loadShop(){
+ try{var d=JSON.parse(localStorage.getItem('pos_db'));if(d&&d.profile&&d.products&&d.products.length){return d;}}catch(e){}
+ return SEED;
+}
+var S=loadShop();
+var CART=[];try{CART=JSON.parse(localStorage.getItem('pos_cart'))||[];}catch(e){CART=[];}
+var FILTER='सभी',Q='';var LAST_ORDER=null;
+function saveCart(){try{localStorage.setItem('pos_cart',JSON.stringify(CART));}catch(e){}}
+function toast(m){var el=document.createElement('div');el.className='toast';el.textContent=m;document.body.appendChild(el);requestAnimationFrame(function(){el.classList.add('show');});setTimeout(function(){el.classList.remove('show');setTimeout(function(){el.remove();},260);},2100);}
+function cartCount(){return CART.reduce(function(s,c){return s+c.qty;},0);}
+function cartSub(){return CART.reduce(function(s,c){return s+c.price*c.qty;},0);}
+function delfee(){var d=S.delivery;if(!d||!d.on)return 0;return cartSub()>=Number(d.freeAt)?0:Number(d.fee);}
+function openSheet(html){var b=document.createElement('div');b.className='sheet';b.innerHTML='<div class="in">'+html+'</div>';b.addEventListener('click',function(e){if(e.target===b)b.remove();});document.body.appendChild(b);return b;}
+function closeSheet(){var b=document.querySelector('.sheet');if(b)b.remove();}
+function prodById(id){for(var i=0;i<S.products.length;i++)if(S.products[i].id===id)return S.products[i];return null;}
+function catEm(name){for(var i=1;i<S.cats.length;i++)if(S.cats[i].name===name)return S.cats[i].emoji;return '🧺';}
+function renderStore(){
+ var chips=S.cats.map(function(c){var n=c.name==='सभी'?S.products.length:S.products.filter(function(p){return p.cat===c.name;}).length;return '<button class="chip'+(FILTER===c.name?' on':'')+'" data-c="'+esc(c.name)+'">'+esc(c.name)+' ('+n+')</button>';}).join('');
+ var prods=S.products.filter(function(p){return FILTER==='सभी'||p.cat===FILTER;}).filter(function(p){return !Q||p.name.toLowerCase().indexOf(Q)!==-1;});
+ var cards=prods.map(function(p){
+   var out=Number(p.stock)<=0;
+   return '<button class="pcard" data-id="'+p.id+'"'+(out?' style="opacity:.55"':'')+'>'+
+     '<div class="em">'+catEm(p.cat)+'</div>'+
+     '<div class="nm">'+esc(p.name)+'</div>'+
+     '<div class="un">'+esc(p.unit)+' · '+esc(p.cat)+'</div>'+
+     '<div class="pr"><span>'+money(p.price)+'</span>'+(p.mrp>p.price?'<span class="mrp">'+money(p.mrp)+'</span><span class="off">'+Math.round((1-p.price/p.mrp)*100)+'% छूट</span>':'')+'</div>'+
+     (out?'<div style="font-size:12px;color:var(--red);font-weight:700">स्टॉक ख़त्म</div>':'')+
+   '</button>';}).join('');
+ document.getElementById('app').innerHTML=
+ '<header class="head">'+
+   '<div class="srow"><div class="logo">'+esc(S.profile.emoji||'🏪')+'</div>'+
+   '<div style="flex:1;min-width:0"><b style="font-size:18px">'+esc(S.profile.name)+'</b><div style="font-size:12.5px;opacity:.92">⭐ '+esc(String(S.profile.rating))+' · '+tOpen()+'</div></div>'+
+   '<a href="index.html" style="color:#fff;background:rgba(255,255,255,.16);border-radius:12px;padding:10px 12px;font-size:12.5px;font-weight:700;text-decoration:none">दुकानदार ऐप</a></div>'+
+   '<div style="font-size:13px;opacity:.92;margin-top:10px">'+esc(S.profile.about||'')+'</div>'+
+   '<div style="font-size:12.5px;opacity:.85;margin-top:6px">'+esc(S.profile.addr||'')+' · '+esc(S.profile.open||'07:00')+'–'+esc(S.profile.close||'22:00')+'</div>'+
+ '</header>'+
+ '<div class="wrap"><input id="sQ" class="search" type="text" placeholder="क्या चाहिए? जैसे: आटा, तेल…" value="'+esc(Q)+'"></div>'+
+ '<div class="chips">'+chips+'</div>'+
+ (cards?'<div class="grid">'+cards+'</div>':'<div class="empty"><div style="font-size:44px">🧺</div><div class="t">कुछ नहीं मिला</div>कुछ और खोजें या कैटेगरी बदलें।</div>')+
+ '<div class="foot">डेमो ऑनलाइन स्टोर · बैकेंड: नहीं (आगा असली एपीआई PART 2 में)<br><a href="index.html">← दुकानदार ऐप पर लौटें</a></div>'+
+ (cartCount()?'<button class="cartbar" id="cartO"><span><span class="c">'+cartCount()+'</span> '+money(cartSub()+delfee())+'</span><span>कार्ट देखें →</span></button>':'');
+ var sq=document.getElementById('sQ');sq.addEventListener('input',function(){Q=this.value.trim().toLowerCase();renderStore();document.getElementById('sQ')&&document.getElementById('sQ').focus();});
+ Array.prototype.forEach.call(document.querySelectorAll('.chip'),function(ch){ch.addEventListener('click',function(){FILTER=ch.getAttribute('data-c');renderStore();});});
+ Array.prototype.forEach.call(document.querySelectorAll('.pcard'),function(b){b.addEventListener('click',function(){prodSheet(b.getAttribute('data-id'));});});
+ var co=document.getElementById('cartO');if(co)co.addEventListener('click',openCart);
+}
+function tOpen(){return S.profile.isOpen===false?'अब बंद':'खुला '+(S.profile.open||'07:00')+' से '+(S.profile.close||'22:00');}
+function prodSheet(id){
+ var p=prodById(id);if(!p)return;
+ var out=Number(p.stock)<=0;
+ var sh=openSheet('<h3 style="margin:8px 0 2px">'+catEm(p.cat)+' '+esc(p.name)+'</h3>'+
+ '<div style="color:var(--muted);font-size:13px">'+esc(p.unit)+' · '+esc(p.cat)+'</div>'+
+ '<div style="display:flex;gap:10px;align-items:baseline;margin:10px 0"><b style="font-size:22px">'+money(p.price)+'</b>'+(p.mrp>p.price?'<s style="color:var(--muted);font-size:14px">'+money(p.mrp)+'</s>':'')+'</div>'+
+ (out?'<p style="color:var(--red);font-weight:700">जल्द स्टॉक आएगा — अपने दुकानदार से संपर्क करें।</p>':'')+
+ '<button class="btn" id="addB" '+(out?'disabled':'')+' style="width:100%">कार्ट में डालें</button>'+
+ '<button class="btn soft" id="waB" style="width:100%;margin-top:10px">दुकानदार से पूछें (WhatsApp)</button>');
+ sh.querySelector('#addB').addEventListener('click',function(){addToCart(p);sh.remove();});
+ sh.querySelector('#waB').addEventListener('click',function(){window.open('https://wa.me/?text='+encodeURIComponent('नमस्ते! मुझे '+p.name+' ('+p.unit+') चाहिए — क्या स्टॉक है?'),' _blank');sh.remove();});
+}
+function addToCart(p){
+ for(var i=0;i<CART.length;i++){if(CART[i].id===p.id){CART[i].qty++;saveCart();toast('कार्ट में जोड़ा('+CART[i].qty+')');renderStore();return;}}
+ CART.push({id:p.id,name:p.name,unit:p.unit,price:p.price,qty:1});saveCart();toast('कार्ट में जोड़ा 🛒');renderStore();
+}
+function openCart(){
+ closeSheet();
+ var rows=CART.map(function(c){
+  return '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)">'+
+  '<div style="flex:1;min-width:0"><b style="font-size:14.5px">'+esc(c.name)+'</b><div style="font-size:12px;color:var(--muted)">'+esc(c.unit)+' · '+money(c.price)+'</div></div>'+
+  '<div class="stepper"><button data-q="-" data-id="'+c.id+'">−</button><span class="qv">'+c.qty+'</span><button data-q="+" data-id="'+c.id+'">+</button></div>'+
+  '<b style="min-width:70px;text-align:right">'+money(c.price*c.qty)+'</b></div>';}).join('');
+ var sub=cartSub(),fee=delfee(),tot=sub+fee;
+ var sh=openSheet('<h3 style="margin:8px 0 6px">आपका कार्ट</h3>'+(rows||'<p style="text-align:center;color:var(--muted)">कार्ट खाली है</p>')+
+ (rows?'<div style="padding:8px 0"><div style="display:flex;justify-content:space-between;font-size:13.5px"><span>उप-योग</span><span>'+money(sub)+'</span></div>'+
+ '<div style="display:flex;justify-content:space-between;font-size:13.5px"><span>डिलीवरी'+(Number(S.delivery.on)?'':' (बंद)')+'</span><span>'+money(fee)+'</span></div>'+
+ '<div style="display:flex;justify-content:space-between;font-weight:800;font-size:16px;margin-top:4px"><span>कुल</span><span>'+money(tot)+'</span></div></div>'+
+ '<button class="btn" id="goCo" style="width:100%"'+(sub?'':' disabled')+'>ऑर्डर जारी करें</button>':''));
+ Array.prototype.forEach.call(sh.querySelectorAll('[data-q]'),function(b){
+  b.addEventListener('click',function(){
+   var id=b.getAttribute('data-id'),d=b.getAttribute('data-q');
+   for(var i=0;i<CART.length;i++){if(CART[i].id===id){if(d==='+')CART[i].qty++;else{CART[i].qty--;if(CART[i].qty<=0)CART.splice(i,1);}break;}}
+   saveCart();var isCo=!!document.getElementById('goCo');if(isCo){openCart();}else{sh.remove();openCart();}renderStore();
+  });});
+ var g=document.getElementById('goCo',sh);if(g)sh.querySelector('#goCo').addEventListener('click',function(){sh.remove();checkoutSheet();});
+}
+function checkoutSheet(){
+ closeSheet();
+ var fee=delfee(),tot=cartSub()+fee;
+ var sh=openSheet('<h3 style="margin:8px 0 6px">पता और भुगतान</h3>'+
+ '<div class="f" id="fA"><label>डिलीवरी का पता *</label><textarea id="coAddr" rows="2" placeholder="पूरा पता, गली, लैंडमार्क"></textarea><div class="msg">पूरा पता लिखें</div></div>'+
+ '<div class="f"><label>फ़ोन नंबर *</label><input id="coPhone" type="tel" maxlength="10" inputmode="numeric" placeholder="98765 43210"></div><div class="f err" id="fPn" style="display:none"><div class="msg">10 अंकों का मोबाइल</div></div>'+
+ '<div style="margin:10px 0"><b style="font-size:14px">भुगतान</b><div style="margin-top:8px"><label style="display:flex;gap:10px;align-items:center;padding:10px;background:var(--bg);border-radius:12px"><input type="radio" name="pay" value="COD" checked> कैश ऑन डिलीवरी (COD)</label></div>'+
+ '<div style="margin-top:6px"><label style="display:flex;gap:10px;align-items:center;padding:10px;background:var(--bg);border-radius:12px"><input type="radio" name="pay" value="UPI"> UPI (डेमो)</label></div></div>'+
+ '<div style="font-weight:800;font-size:17px;text-align:right;margin:8px 0">कुल: '+money(tot)+'</div>'+
+ '<button class="btn" id="place" style="width:100%">ऑर्डर प्लेस करें ('+money(tot)+')</button>'+
+ '<p style="font-size:12px;color:var(--muted);text-align:center">डेमो ऑर्डर — असली पैसे नहीं काटे जाएंगे</p>');
+ sh.querySelector('#place').addEventListener('click',function(){
+  var addr=(sh.querySelector('#coAddr').value||'').trim(),ph=(sh.querySelector('#coPhone').value||'').trim();
+  var ok1=addr.length>=8,ok2=/^[6-9]\d{9}$/.test(ph);
+  sh.querySelector('#fA').classList.toggle('err',!ok1);
+  sh.querySelector('#fPn').style.display=ok2?'none':'block';
+  if(!ok1||!ok2)return;
+  var sub=cartSub();
+  var db=null;try{db=JSON.parse(localStorage.getItem('pos_db'));}catch(e){}
+  var orderId='PO-'+(1024+(db&&db.orders?db.orders.length+1:S.products.length));
+  var items=CART.map(function(c){return [c.id,c.qty];});
+  var ord={id:orderId,status:'नई',cust:'वेब स्टोर ग्राहक',phone:ph,items:items,fee:fee,mode:'होम डिलीवरी',pay:sh.querySelector('input[name=pay]:checked').value,time:Date.now(),addr:addr};
+  if(db&&db.orders){db.orders.unshift(ord);try{localStorage.setItem('pos_db',JSON.stringify(db));}catch(e){}}
+  LAST_ORDER=ord;CART=[];saveCart();sh.remove();orderDone(ord,tot);
+ });
+}
+function orderDone(o,tot){
+ document.getElementById('app').innerHTML=
+ '<div class="succ"><div class="tick">✓</div>'+
+ '<h2 style="margin:0;font-size:21px">ऑर्डर प्लेस हो गया!</h2>'+
+ '<p style="color:var(--muted);font-size:14px">ऑर्डर नंबर <b>'+esc(o.id)+'</b><br>अनुमानित: '+esc(S.delivery.on?'30-60 मिनट':'पिकअप')+' · '+money(tot)+' ('+esc(o.pay)+')</p>'+
+ '<p style="background:var(--g50);color:var(--g800);font-weight:700;border-radius:12px;padding:10px;font-size:13.5px">दुकानदार ऐप के "नए ऑर्डर" में यह दिख जाएगा — डोन्ट क्लोज़ कीजिए।</p>'+
+ '<button class="btn" style="width:100%" onclick="location.reload()">स्टोर पर लौटें</button>'+
+ '<a href="index.html" style="display:block;margin-top:10px;color:var(--g800);font-weight:700;text-decoration:none">दुकानदार ऐप खोलें →</a></div>';
+}
+document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('[data-c]')){FILTER=e.target.closest('[data-c]').getAttribute('data-c');renderStore();}});
+window.__posHandleBack=function(){if(document.querySelector('.sheet')){closeSheet();return true;}return false;};
+if(cartCount()&&!LAST_ORDER){openCart();}
+renderStore();
+</script>
+</body>
+</html>
