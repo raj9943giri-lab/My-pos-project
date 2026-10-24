@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0F172A">
+<title>POS एडमिन पैनल</title>
+<style>
+:root{--g800:#046A4A;--g700:#048A56;--g50:#ECFDF5;--bg:#F1F5F4;--ink:#0F172A;--muted:#64748B;--line:#E2E8F0;--amber:#F59E0B;--red:#DC2626;--blue:#2563EB;--safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;overscroll-behavior:none}
+body{font-family:-apple-system,'Segoe UI',Roboto,'Noto Sans Devanagari',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;padding-bottom:24px}
+.head{background:#0F172A;color:#fff;padding:calc(12px + var(--safe-t)) 16px 12px;display:flex;gap:10px;align-items:center}
+.head b{flex:1}
+.rail{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);display:flex;overflow-x:auto;padding:0 8px;scrollbar-width:none;z-index:5}
+.rail::-webkit-scrollbar{display:none}
+.rt{border:none;background:none;font-family:inherit;padding:12px 14px;font-size:14px;font-weight:700;color:var(--muted);white-space:nowrap;border-bottom:3px solid transparent}
+.rt.on{color:var(--g800);border-color:var(--g700)}
+.wrap{padding:14px 14px}
+.stat{background:#fff;border-radius:16px;box-shadow:0 1px 2px rgba(15,23,42,.06);padding:12px 14px}
+.stat .k{font-size:12px;color:var(--muted);font-weight:600}
+.stat .v{font-size:20px;font-weight:800}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{background:#fff;border-radius:16px;box-shadow:0 1px 2px rgba(15,23,42,.06);padding:14px;margin-bottom:10px}
+.badge{display:inline-flex;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:700}
+.b-ok{background:var(--g50);color:var(--g800)}.b-pend{background:#FEF3C7;color:#B45309}.b-x{background:#FEE2E2;color:#B91C1C}.b-n{background:var(--line);color:var(--muted)}.b-run{background:#DBEAFE;color:#1D4ED8}.b-susp{background:#FEE2E2;color:#B91C1C}.b-dark{background:#0F172A;color:#fff}
+.btn{border:none;border-radius:12px;min-height:46px;font-size:14.5px;font-weight:700;font-family:inherit;cursor:pointer;background:var(--g700);color:#fff}
+.btn.soft{background:var(--g50);color:var(--g800)}
+.btn.red{background:#FEF2F2;color:var(--red)}
+.btn.amber{background:#FFFBEB;color:#B45309}
+.btn.sm{min-height:40px;padding:0 14px;font-size:13.5px}
+.row{display:flex;align-items:center;gap:10px}
+.rowflex{display:flex;align-items:center;justify-content:space-between;gap:10px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,.06);font-size:13.5px}
+th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line)}
+th{background:#F8FAFC;font-size:12px;color:var(--muted)}
+tr:last-child td{border-bottom:none}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(12px);background:#0F172A;color:#fff;padding:11px 17px;border-radius:13px;font-size:14px;font-weight:600;opacity:0;transition:.2s;z-index:99;max-width:88vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.mini{font-size:12px;color:var(--muted)}
+.infobar{background:#EFF6FF;color:#1E40AF;border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:10px}
+.warnbar{background:#FFFBEB;color:#92400E;border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:10px}
+.errbar{background:#FEE2E2;color:#B91C1C;border-radius:12px;padding:10px 12px;font-size:13px;margin-bottom:10px}
+input[type=text],input[type=password],input[type=email],input[type=number],select,textarea{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:15px;background:#fff;margin:0;outline-color:var(--g700)}
+label{font-size:13px;font-weight:700;color:var(--muted);display:block;margin:10px 0 5px}
+.sheet{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:50;display:flex;align-items:flex-end}
+.sheet .in{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:88vh;overflow-y:auto;padding:10px 18px calc(22px + var(--safe-b));animation:up .2s ease-out}
+@keyframes up{from{transform:translateY(50px);opacity:.5}to{transform:none;opacity:1}}
+.hlist{margin:6px 0 0;padding-left:0;list-style:none}
+.hlist li{padding:6px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.hlist li:last-child{border-bottom:none}
+.pill{display:inline-flex;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:700;background:#EEF2FF;color:#4338CA}
+.login-wrap{min-height:84vh;display:flex;align-items:center;justify-content:center;padding:22px}
+.login{background:#fff;border-radius:20px;box-shadow:0 4px 18px rgba(15,23,42,.10);padding:26px 22px;width:100%;max-width:390px}
+.login h1{font-size:21px;margin:0 0 4px}
+.login .sub{color:var(--muted);font-size:13px;margin-bottom:16px}
+.hint{background:var(--g50);color:var(--g800);border-radius:10px;padding:9px 11px;font-size:12px;margin-top:14px}
+</style>
+</head>
+<body>
+<header class="head" id="head"></header>
+<nav class="rail" id="rail"></nav>
+<main id="app" class="wrap"></main>
+<script src="admin-api.js"></script>
+<script>
+'use strict';
+/* ============================================================================
+   POS — PART 7 एडमिन पैनल
+   ----------------------------------------------------------------------------
+   SERVER mode : असली NestJS backend से — POST /admin/auth/login (scrypt पासवर्ड,
+                 JWT ~12 घंटे) → भूमिका-अनुसार tabs:
+                   · SUPER_ADMIN : सब (एडमिन-टीम मैनेजमेंट सहित)
+                   · ADMIN       : दुकानें+अप्रूवल, शिकायतें, पॉलिसी, ऑडिट
+                   · SUPPORT     : शिकायतें पूरी; दुकानें सिर्फ़ पढ़ने को
+     OFFLINE mode: backend बिना डेमो डेटा (हर स्क्रीन पर साफ़ "डेमो" लेबल; dev-only).
+   NOTE: भूमिका हर request पर server DB से ताज़ा लागू होती है (RolesGuard) —
+   UI के tabs केवल सुविधा हैं; अनुमति का असली फ़ैसला server का ही है.
+   ========================================================================== */
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function money(n){n=Number(n)||0;return '₹'+n.toLocaleString('en-IN');}
+function toast(m){var el=document.createElement('div');el.className='toast';el.textContent=m;document.body.appendChild(el);requestAnimationFrame(function(){el.classList.add('show');});setTimeout(function(){el.classList.remove('show');setTimeout(function(){el.remove();},260);},2600);}
+function fail(e){toast(POSADMIN.errText(e));}
+function timeAgo(iso){var t=new Date(iso).getTime();if(!t||isNaN(t))return '—';var d=(Date.now()-t)/1000;if(d<60)return 'अभी';if(d<3600)return Math.floor(d/60)+' मिनट पहले';if(d<86400)return Math.floor(d/3600)+' घंटे पहले';return Math.floor(d/86400)+' दिन पहले';}
+
+var ME=null;var TABS=[];var CUR='डैशबोर्ड';
+var SHOP_Q='',SHOP_STATUS='',CMP_Q='',CMP_STATUS='',ORD_Q='',ORD_STATUS='';
+/* ===================================================================== */
+/*                            डेमो मोड (offline)                          */
+/* ===================================================================== */
+var ADB_SEED={
+ shops:[
+  {id:'sh1',name:'शर्मा किराना',owner:'राजेश शर्मा',cat:'किराना',city:'गाज़ीपुर',status:'PENDING'},
+  {id:'sh2',name:'गुप्ता डेयरी',owner:'सुनील गुप्ता',cat:'डेयरी',city:'बनारस',status:'PENDING'},
+  {id:'sh3',name:'राज फार्मेसी',owner:'अनीता सिंह',cat:'फार्मेसी',city:'अल्फीनगर',status:'APPROVED'},
+  {id:'sh4',name:'त्रिपाठी सब्ज़ी',owner:'मोहन त्रिपाठी',cat:'फल-सब्जी',city:'गाज़ीपुर',status:'APPROVED'},
+  {id:'sh5',name:'कुमार हार्डवेयर',owner:'विकास कुमार',cat:'हार्डवेयर',city:'लखनऊ',status:'REJECTED'}
+ ],
+ complaints:[
+  {id:'cmp1',shop:'शर्मा किराना',text:'डिलीवरी 15 मिनट लेट',status:'OPEN',order:'S-000123'},
+  {id:'cmp2',shop:'त्रिपाठी सब्ज़ी',text:'टमाटर थोड़ा खराब',status:'RESOLVED',order:'S-000101'}
+ ],
+ orders:[
+  {id:'S-000123',shop:'शर्मा किराना',customer:'अमित',total:480,status:'NEW',pay:'COD'},
+  {id:'S-000122',shop:'त्रिपाठी सब्ज़ी',customer:'सुनीता',total:260,status:'DELIVERED',pay:'PAID'},
+  {id:'S-000121',shop:'राज फार्मेसी',customer:'मोहन',total:150,status:'PREPARING',pay:'COD'}
+ ],
+ policy:{commission_default_pct:8,cod_max_order:5000,complaint_sla_hrs:24}
+};
+var ADB=null;
+try{ADB=JSON.parse(localStorage.getItem('pos_admin_db_demo'));}catch(e){ADB=null;}
+if(!ADB||!ADB.shops){ADB=JSON.parse(JSON.stringify(ADB_SEED));}
+if(!ADB.orders)ADB.orders=JSON.parse(JSON.stringify(ADB_SEED.orders));
+function persistDemo(){try{localStorage.setItem('pos_admin_db_demo',JSON.stringify(ADB));}catch(e){}}
+if(!localStorage.getItem('pos_admin_db_demo'))persistDemo();
+var DEMO_TABS=['डैशबोर्ड','शॉप अप्रूवल','सभी दुकानें','ऑर्डर्स','शिकायतें','कमीशन','पॉलिसी (डेमो)'];
+
+function badgeSt(s){
+ return {APPROVED:'<span class="badge b-ok">लाइव</span>',PENDING:'<span class="badge b-pend">दंड में</span>',
+  DRAFT:'<span class="badge b-n">ड्राफ़्ट</span>',REJECTED:'<span class="badge b-x">रद्द</span>',
+  SUSPENDED:'<span class="badge b-susp">रोका गया</span>'}[s]||('<span class="badge b-n">'+esc(s)+'</span>');
+}
+function complaintBadge(s){
+ return {OPEN:'<span class="badge b-pend">खुली</span>',IN_PROGRESS:'<span class="badge b-run">चल रही</span>',
+  RESOLVED:'<span class="badge b-ok">हल हुई</span>',CLOSED:'<span class="badge b-n">बंद</span>'}[s]||('<span class="badge b-n">'+esc(s)+'</span>');
+}
+function viewDashDemo(){
+ var pend=ADB.shops.filter(function(s){return s.status==='PENDING';}).length;
+ return '<div class="warnbar">⚡ डेमो मोड — असली एडमिन होने के लिए Settings में API base URL सेट कर backend से लॉगिन करें।</div>'+
+ '<div class="grid">'+
+  '<div class="stat"><div class="k">दुकानें</div><div class="v">'+ADB.shops.length+'</div></div>'+
+  '<div class="stat"><div class="k">दंड में</div><div class="v">'+pend+'</div></div>'+
+  '<div class="stat"><div class="k">खुली शिकायतें</div><div class="v">'+ADB.complaints.filter(function(c){return c.status==='OPEN';}).length+'</div></div>'+
+  '<div class="stat"><div class="k">मोड</div><div class="v" style="font-size:15px">ऑफ़लाइन डेमो</div></div>'+
+ '</div>'+
+ '<table style="margin-top:10px"><tr><th>शिकायत</th><th>ऑर्डर</th><th>स्थिति</th></tr>'+
+ ADB.complaints.map(function(c){return '<tr><td>'+esc(c.text)+'<br><span class="mini">'+esc(c.shop)+'</span></td><td>'+esc(c.order)+'</td><td>'+complaintBadge(c.status)+'</td></tr>';}).join('')+
+ '</table>';
+}
+function viewPendDemo(){
+ var pend=ADB.shops.filter(function(s){return s.status==='PENDING';});
+ if(!pend.length)return '<div class="card" style="text-align:center;padding:30px"><div style="font-size:40px">✅</div><b>सब अप्रूवल पूरे</b><div class="mini">कोई लंबित दुकान नहीं</div></div>';
+ return pend.map(function(s){
+  return '<div class="card"><b style="font-size:16px">'+esc(s.name)+'</b><div class="mini">'+esc(s.owner)+' · '+esc(s.cat)+' · '+esc(s.city)+'</div>'+
+  '<div class="row" style="margin-top:10px"><button class="btn" style="flex:1" data-demo-acc="'+esc(s.id)+'">✓ अप्रूव</button>'+
+  '<button class="btn red" style="flex:1" data-demo-rej="'+esc(s.id)+'">✕ रिजेक्ट</button></div></div>';}).join('');
+}
+function viewShopsDemo(){
+ return '<table><tr><th>दुकान</th><th>स्थिति</th></tr>'+
+ ADB.shops.map(function(s){return '<tr><td><b>'+esc(s.name)+'</b><br><span class="mini">'+esc(s.owner)+' · '+esc(s.city)+'</span></td><td>'+badgeSt(s.status)+'</td></tr>';}).join('')+'</table>';
+}
+function viewOrdersDemo(){
+ return '<div class="warnbar">⚡ डेमो ऑर्डर — असली ऑर्डर के लिए backend से लॉगिन करें।</div>'+
+ '<table><tr><th>ऑर्डर</th><th>दुकान/ग्राहक</th><th>कुल</th><th>स्थिति</th></tr>'+
+ (ADB.orders||[]).map(function(o){
+  return '<tr><td><b>'+esc(o.id)+'</b><br><span class="mini">'+esc(o.pay||'')+'</span></td>'+
+  '<td>'+esc(o.shop||'')+'<br><span class="mini">'+esc(o.customer||'')+'</span></td>'+
+  '<td>'+money(o.total)+'</td><td>'+orderBadge(o.status)+'</td></tr>';
+ }).join('')+'</table>';
+}
+function viewCommissionDemo(){
+ var pct=Number(ADB.policy.commission_default_pct)||0;
+ var delivered=(ADB.orders||[]).filter(function(o){return o.status==='DELIVERED';});
+ var gmv=delivered.reduce(function(a,o){return a+(Number(o.total)||0);},0);
+ return '<div class="warnbar">⚡ डेमो — कमीशन केवल दिखाया गया है; असली दर platform_policies में सेव होती है।</div>'+
+  '<div class="grid"><div class="stat"><div class="k">डिफ़ॉल्ट दर</div><div class="v">'+esc(String(pct))+'%</div></div>'+
+  '<div class="stat"><div class="k">DELIVERED बिक्री</div><div class="v" style="font-size:17px">'+money(gmv)+'</div></div></div>'+
+  '<div class="card" style="margin-top:10px"><b>अनुमानित कमीशन: '+money(Math.round(gmv*pct)/100)+'</b>'+
+  '<div class="mini">असली बदलाव के लिए "पॉलिसी" tab में commission_default_pct सेव करें।</div></div>';
+}
+function viewComplaintsDemo(){
+ return '<table><tr><th>शिकायत</th><th>ऑर्डर</th><th>स्थिति</th></tr>'+
+ ADB.complaints.map(function(c){return '<tr><td>'+esc(c.text)+'<br><span class="mini">'+esc(c.shop)+'</span></td><td>'+esc(c.order)+'</td><td>'+complaintBadge(c.status)+'</td></tr>';}).join('')+'</table>';
+}
+function viewPolicyDemo(){
+ var p=ADB.policy;
+ return '<div class="warnbar">⚡ डेमो — सेव स्थानीय है; असली नियम-सत्यापक NestJS backend (platform_policies) में चलता है।</div>'+
+ '<div class="card"><div class="rowflex" style="padding:8px 0"><div style="flex:1"><b>कमीशन %</b><div class="mini">0…30</div></div><input id="pc" type="number" value="'+p.commission_default_pct+'" style="width:90px"></div>'+
+ '<div class="rowflex" style="padding:8px 0"><div style="flex:1"><b>COD लिमिट ₹</b><div class="mini">एक ऑर्डर की अधिकतम राशि</div></div><input id="pcod" type="number" value="'+p.cod_max_order+'" style="width:90px"></div>'+
+ '<div class="rowflex" style="padding:8px 0"><div style="flex:1"><b>शिकायत SLA घंटे</b><div class="mini">1…720</div></div><input id="psla" type="number" value="'+p.complaint_sla_hrs+'" style="width:90px"></div>'+
+ '<button class="btn" style="width:100%;margin-top:10px" id="polSave">सेव पॉलिसी (डेमो)</button></div>';
+}
+function renderDemo(){
+ document.getElementById('head').innerHTML='<b style="flex:1">🛡️ POS एडमिन पैनल <span class="mini" style="color:#94A3B8">डेमो</span></b>';
+ document.getElementById('rail').innerHTML=DEMO_TABS.map(function(t){
+  var c='';if(t==='शॉप अप्रूवल')c=ADB.shops.filter(function(s){return s.status==='PENDING';}).length;
+  return '<button class="rt'+(CUR===t?' on':'')+'" data-t="'+esc(t)+'">'+esc(t)+(c?' ('+c+')':'')+'</button>';}).join('');
+ var v=CUR==='डैशबोर्ड'?viewDashDemo():CUR==='शॉप अप्रूवल'?viewPendDemo():CUR==='सभी दुकानें'?viewShopsDemo():CUR==='ऑर्डर्स'?viewOrdersDemo():CUR==='शिकायतें'?viewComplaintsDemo():CUR==='कमीशन'?viewCommissionDemo():viewPolicyDemo();
+ document.getElementById('app').innerHTML='<div class="row" style="margin-bottom:10px"><span class="badge b-dark">डेमो</span></div>'+v;
+}
+/* ===================================================================== */
+/*                          सर्वर मोड (असली)                               */
+/* ===================================================================== */
+function roleOf(){return ME&&ME.role?ME.role:'SUPPORT';}
+function isAdmin(){var r=roleOf();return r==='SUPER_ADMIN'||r==='ADMIN';}
+function roleLabel(rl){rl=rl||roleOf();return {SUPER_ADMIN:'सुपर एडमिन',ADMIN:'एडमिन',SUPPORT:'सपोर्ट'}[rl]||rl;}
+function buildTabs(){
+ TABS=[
+  {k:'डैशबोर्ड',v:'dashboard'},{k:'अप्रूवल कतार',v:'queue'},{k:'दुकानें',v:'shops'},
+  {k:'ऑर्डर्स',v:'orders'},{k:'कमीशन',v:'commissions'},{k:'शिकायतें',v:'complaints'},
+  {k:'पॉलिसी',v:'policies'},{k:'एडमिन',v:'admins'},{k:'ऑडिट',v:'audit'}
+ ].filter(function(t){
+  var r=roleOf();
+  if(r==='SUPER_ADMIN')return true;
+  if(r==='ADMIN')return t.v!=='admins';
+  return t.v==='dashboard'||t.v==='queue'||t.v==='shops'||t.v==='orders'||t.v==='complaints'||t.v==='policies';
+ });
+ if(TABS.map(function(t){return t.k;}).indexOf(CUR)===-1)CUR='डैशबोर्ड';
+}
+function goto(k){
+ CUR=k;
+ document.getElementById('rail').innerHTML=TABS.map(function(t){
+  return '<button class="rt'+(CUR===t.k?' on':'')+'" data-t="'+esc(t.k)+'">'+esc(t.k)+'</button>';}).join('');
+ load();
+}
+function headDom(){
+ return '<b style="flex:1">🛡️ POS एडमिन पैनल <span class="mini" style="color:#94A3B8">'+
+ esc(ME.name||ME.email||'')+' · '+esc(roleLabel())+'</span></b>'+
+ '<button class="btn sm" style="background:rgba(255,255,255,.14);color:#fff" data-logout="1">बाहर</button>';
+}
+function mount(){document.getElementById('head').innerHTML=headDom();buildTabs();goto(CUR);}
+function load(){
+ var a=document.getElementById('app');
+ a.innerHTML='<div class="card" style="text-align:center;padding:26px"><div class="mini">लोड हो रहा…</div></div>';
+ var p=null,reLogin=false;
+ if(CUR==='डैशबोर्ड')p=POSADMIN.api.dashboard().then(viewDashboard);
+ else if(CUR==='अप्रूवल कतार')p=POSADMIN.api.shops.list({queue:1,limit:100,q:SHOP_Q}).then(function(r){return renderShops(r.items||[],true);});
+ else if(CUR==='दुकानें')p=POSADMIN.api.shops.list({status:SHOP_STATUS,limit:100,q:SHOP_Q}).then(function(r){return renderShops(r.items||[],false);});
+ else if(CUR==='ऑर्डर्स')p=POSADMIN.api.orders.list({status:ORD_STATUS,limit:50,q:ORD_Q}).then(viewOrders);
+ else if(CUR==='कमीशन')p=POSADMIN.api.commissions.summary().then(viewCommissions);
+ else if(CUR==='शिकायतें')p=POSADMIN.api.complaints.list({status:CMP_STATUS,limit:50,q:CMP_Q}).then(function(r){return renderComplaints(r.items||[]);});
+ else if(CUR==='पॉलिसी')p=POSADMIN.api.policies.list().then(viewPolicies);
+ else if(CUR==='एडमिन')p=POSADMIN.api.admins.list().then(viewAdmins);
+ else if(CUR==='ऑडिट')p=POSADMIN.api.audit.list(50).then(viewAudit);
+ if(!p)return;
+ p.then(function(html){a.innerHTML=html;})
+ .catch(function(e){
+  if(e&&e.http&&e.status===401)reLogin=true;
+  a.innerHTML='<div class="errbar">'+esc(POSADMIN.errText(e))+'</div>'+
+  '<div class="row" style="margin:8px 0 0"><button class="btn" style="flex:1" data-reload="1">फिर कोशिश</button>'+
+  (reLogin?'<button class="btn soft" style="flex:1" data-logout="1">लॉगिन पर जाएँ</button>':'')+'</div>';
+ });
+}
+/* ------------------------------- रेंडरर --------------------------------- */
+function viewDashboard(d){
+ var g=function(k){var o=d&&d[k];return (o&&typeof o==='object')?o:{};};
+ var shops=g('shops'),cmp=g('complaints'),ords=g('orders');
+ var pick=function(o,arr){for(var i=0;i<arr.length;i++){if(o&&o[arr[i]]!==undefined)return Number(o[arr[i]])||0;}return 0;};
+ return '<div class="infobar">🛡️ हर request पर भूमिका server DB से जाँची जाती है — यह पैनल केवल दर्पण है.</div>'+
+ '<div class="grid">'+
+  '<div class="stat"><div class="k">दुकानें</div><div class="v">'+pick(shops,['total','all'])+'</div></div>'+
+  '<div class="stat"><div class="k">दंड में दुकानें</div><div class="v">'+pick(shops,['pending','PENDING'])+'</div></div>'+
+  '<div class="stat"><div class="k">खुली शिकायतें</div><div class="v">'+pick(cmp,['open','OPEN'])+'</div></div>'+
+  '<div class="stat"><div class="k">आज के ऑर्डर</div><div class="v">'+pick(ords,['today','todayCount','TODAY'])+'</div></div>'+
+ '</div>'+
+ (pick(shops,['oldestPendingHours'])>0?'<div class="warnbar" style="margin-top:10px">⏳ सबसे पुरानी लंबित दुकान '+pick(shops,['oldestPendingHours'])+' घंटे से अप्रूवल का इंतज़ार कर रही है.</div>':'')+
+ '<div class="card" style="margin-top:10px"><b style="font-size:15px">⚡ कार्य-सूची</b><ul class="hlist">'+
+ '<li><button class="btn sm soft" style="width:100%" data-tab="अप्रूवल कतार">दुकान अप्रूवल कतार →</button></li>'+
+ '<li><button class="btn sm soft" style="width:100%" data-tab="शिकायतें">शिकायतें →</button></li>'+
+ (roleOf()==='SUPER_ADMIN'?'<li><button class="btn sm soft" style="width:100%" data-tab="एडमिन">एडमिन-टीम →</button></li>':'')+
+ '</ul></div>';
+}
+function shopCard(s,queueMode){
+ var id=s.id||s.shopId;
+ var cats=Array.isArray(s.categories)?s.categories.join(', '):(s.categories||'');
+ var btns='<div class="row" style="margin-top:10px;flex-wrap:wrap">';
+ if(isAdmin()&&queueMode&&(s.status==='PENDING'||s.status==='DRAFT')){
+  btns+='<button class="btn" style="flex:1" data-sh="APPROVE" data-id="'+esc(id)+'">✓ अप्रूव</button>';
+  btns+='<button class="btn red" style="flex:1" data-sh="REJECT" data-id="'+esc(id)+'">✕ रिजेक्ट</button>';
+ }else if(isAdmin()&&s.status==='APPROVED'){
+  btns+='<button class="btn amber" style="flex:1" data-sh="SUSPEND" data-id="'+esc(id)+'">⏸ रोकें</button>';
+  btns+='<button class="btn '+(s.published?'soft':'')+'" style="flex:1" data-pub="'+(s.published?'0':'1')+'" data-id="'+esc(id)+'">'+(s.published?'🌐 public से हटाएँ':'🌐 public करें')+'</button>';
+ }else if(isAdmin()&&s.status==='SUSPENDED'){
+  btns+='<button class="btn" style="flex:1" data-sh="UNSUSPEND" data-id="'+esc(id)+'">▶ वापस चालू</button>';
+ }
+ btns+='<button class="btn sm soft" style="flex:1" data-shop="'+esc(id)+'">📋 विवरण</button>';
+ btns+='</div>';
+ if(!isAdmin())btns='<div class="row" style="margin-top:6px;flex-wrap:wrap"><span class="mini" style="flex:1">👁️ read-only (आपकी भूमिका: '+esc(roleLabel())+')</span>'+
+  '<button class="btn sm soft" data-shop="'+esc(id)+'">📋 विवरण</button></div>';
+ return '<div class="card"><div class="rowflex"><b style="font-size:16px;flex:1">'+esc(s.shopName||s.name||'')+'</b>'+badgeSt(s.status)+
+ (s.status==='APPROVED'?'<span class="badge '+(s.published?'b-ok':'b-pend')+'" style="margin-left:4px">'+(s.published?'public':'छिपी')+'</span>':'')+'</div>'+
+ '<div class="mini">'+esc(s.ownerName||'')+(s.address?' · '+esc(s.address):'')+(s.slug?' · '+esc(s.slug):'')+'</div>'+
+ (cats?'<div class="mini">🏷️ '+esc(cats)+'</div>':'')+
+ (s.licenseNo||s.licenseNumber?'<div class="mini">📜 लाइसेंस: '+esc(s.licenseNo||s.licenseNumber)+'</div>':'')+
+ (s.reason||s.rejectReason?'<div class="errbar" style="margin:8px 0 0">कारण: '+esc(s.reason||s.rejectReason)+'</div>':'')+
+ btns+'</div>';
+}
+function renderShops(items,queueMode){
+ var bar='<div class="row" style="margin:0 0 10px;flex-wrap:wrap">'+
+  '<input id="fq" type="text" placeholder="दुकान/मालिक/slug खोजें" value="'+esc(SHOP_Q)+'" style="flex:2;min-width:150px">';
+ if(!queueMode){
+  bar+='<select id="fstatus" style="flex:1;min-width:120px"><option value="">— सभी हाल —</option>'+
+  ['APPROVED','PENDING','DRAFT','SUSPENDED','REJECTED'].map(function(x){return '<option value="'+x+'"'+(SHOP_STATUS===x?' selected':'')+'>'+x+'</option>';}).join('')+'</select>';
+ }
+ bar+='<button class="btn sm soft" id="fgo">देखें</button></div>';
+ if(!items.length)return bar+'<div class="card" style="text-align:center;padding:30px"><div style="font-size:40px">✅</div><b>'+
+  (queueMode?'सब अप्रूवल पूरे':'कोई दुकान नहीं')+'</b><div class="mini">'+(queueMode?'कोई लंबित दुकान नहीं':'सूची खाली')+'</div></div>';
+ var note=queueMode?'<div class="infobar">PENDING/DRAFT दुकानें — APPROVE होते ही दुकान public (जब तक auto-publish बंद न हो); REJECT का कारण दुकानदार देखता है।</div>':'';
+ return note+bar+items.map(function(s){return shopCard(s,queueMode);}).join('');
+}
+function renderComplaints(items){
+ var f='<div class="row" style="margin:0 0 10px;flex-wrap:wrap">'+
+  '<input id="cq" type="text" placeholder="शिकायत/ऑर्डर/दुकान खोजें" value="'+esc(CMP_Q)+'" style="flex:2;min-width:150px">'+
+  '<select id="cst" style="flex:1;min-width:120px"><option value="">— सभी —</option>'+
+  ['OPEN','IN_PROGRESS','RESOLVED','CLOSED'].map(function(x){return '<option value="'+x+'"'+(CMP_STATUS===x?' selected':'')+'>'+x+'</option>';}).join('')+'</select>'+
+  '<button class="btn sm soft" id="cgo">देखें</button></div>';
+ if(!items.length)return f+'<div class="card" style="text-align:center;padding:30px"><b>कोई शिकायत नहीं</b><div class="mini">ग्राहक/दुकानदार की नई शिकायतें यहाँ दिखेंगी</div></div>';
+ return f+items.map(function(c){
+  return '<div class="card" data-cmp="'+esc(c.id)+'" style="cursor:pointer"><div class="rowflex"><b style="flex:1">#'+
+  esc(c.id)+(c.orderRef?' · '+esc(c.orderRef):'')+'</b>'+complaintBadge(c.status)+'</div>'+
+  '<div>'+esc(String(c.body||'').slice(0,90))+'</div>'+
+  '<div class="mini">'+esc(c.shopName||'')+' · '+esc(c.category||'')+' · '+timeAgo(c.createdAt)+
+  (c.assignedName?' · 🧑‍💼 '+esc(c.assignedName):'')+'</div>'+
+  (c.priority==='HIGH'?'<div class="warnbar" style="margin:8px 0 0">⚠️ HIGH प्राथमिकता</div>':'')+
+  '</div>';}).join('');
+}
+function orderBadge(s){
+ var m={NEW:['b-pend','नई'],ACCEPTED:['b-run','स्वीकृत'],PREPARING:['b-run','तैयारी'],PREPARED:['b-run','तैयार'],
+  TRANSIT:['b-run','रास्ते में'],DELIVERED:['b-ok','पूरी'],CANCELLED:['b-x','रद्द'],REJECTED:['b-x','अस्वीकृत']};
+ var x=m[s]||['b-n',s];
+ return '<span class="badge '+x[0]+'">'+esc(x[1])+'</span>';
+}
+function payBadge(s){
+ var m={PAID:['b-ok','चुका'],PENDING:['b-pend','बाकी'],COD_PENDING:['b-pend','COD बाकी'],FAILED:['b-x','फेल']};
+ var x=m[s]||['b-n',s];
+ return '<span class="badge '+x[0]+'">'+esc(x[1])+'</span>';
+}
+function viewOrders(res){
+ var items=(res&&res.items)||[];
+ var bar='<div class="row" style="margin:0 0 10px;flex-wrap:wrap">'+
+  '<input id="oq" type="text" placeholder="ऑर्डर नंबर/दुकान/ग्राहक" value="'+esc(ORD_Q)+'" style="flex:2;min-width:150px">'+
+  '<select id="ost" style="flex:1;min-width:120px"><option value="">— सभी —</option>'+
+  ['NEW','ACCEPTED','PREPARING','PREPARED','TRANSIT','DELIVERED','CANCELLED','REJECTED']
+   .map(function(x){return '<option value="'+x+'"'+(ORD_STATUS===x?' selected':'')+'>'+x+'</option>';}).join('')+
+  '</select><button class="btn sm soft" id="ogo">देखें</button></div>';
+ var count='<div class="mini" style="margin-bottom:8px">कुल '+esc(String((res&&res.total)||items.length))+' ऑर्डर</div>';
+ if(!items.length)return bar+'<div class="card" style="text-align:center;padding:30px"><b>कोई ऑर्डर नहीं</b><div class="mini">इस फ़िल्टर पर कुछ नहीं मिला</div></div>';
+ return bar+count+items.map(function(o){
+  return '<div class="card"><div class="rowflex"><b style="flex:1">'+esc(o.orderNo||('#'+o.id))+' · '+esc(o.shopName||'')+'</b>'+orderBadge(o.status)+'</div>'+
+  '<div class="mini">'+esc(o.customerName||'—')+(o.customerPhone?' · '+esc(o.customerPhone):'')+
+  ' · '+esc(o.fulfilment||'')+' · '+timeAgo(o.placedAt)+'</div>'+
+  '<div class="row" style="margin-top:6px;justify-content:space-between"><span>'+esc(String(o.itemCount||0))+' सामान · '+payBadge(o.paymentStatus)+'</span>'+
+  '<b>'+money(o.total)+'</b></div></div>';
+ }).join('');
+}
+function viewCommissions(d){
+ var pct=Number(d&&d.defaultPct)||0;
+ var shops=(d&&d.shops)||[];
+ var rows=shops.map(function(s){
+  return '<tr><td><b>'+esc(s.name||'')+'</b><br><span class="mini">'+esc(String(s.orders||0))+' पूरे · '+esc(s.status||'')+'</span></td>'+
+  '<td style="text-align:right">'+money(s.gmv)+'</td><td style="text-align:right"><b>'+money(s.commission)+'</b></td></tr>';
+ }).join('')||'<tr><td colspan="3" class="mini">कोई दुकान नहीं</td></tr>';
+ return '<div class="infobar">💰 डिफ़ॉल्ट कमीशन platform_policies में सेव होता है; नीचे हर दुकान की DELIVERED बिक्री पर अनुमान है.</div>'+
+  '<div class="card"><div class="rowflex"><div style="flex:1"><b>डिफ़ॉल्ट कमीशन %</b><div class="mini">0…30 · बदलाव audit_log में</div></div>'+
+  '<input id="comPct" type="number" min="0" max="30" step="0.5" value="'+esc(String(pct))+'" style="width:90px">'+
+  '<button class="btn sm" id="comSave">सेव</button></div></div>'+
+  '<div class="grid" style="margin-bottom:10px"><div class="stat"><div class="k">कुल बिक्री (DELIVERED)</div><div class="v" style="font-size:17px">'+money(d&&d.totalGmv)+'</div></div>'+
+  '<div class="stat"><div class="k">अनुमानित कमीशन</div><div class="v" style="font-size:17px">'+money(d&&d.totalCommission)+'</div></div></div>'+
+  '<table><tr><th>दुकान</th><th style="text-align:right">बिक्री</th><th style="text-align:right">कमीशन</th></tr>'+rows+'</table>';
+}
+var POLICY_HINTS={commission_default_pct:'कमीशन प्रतिशत',cod_max_order:'COD लिमिट ₹',shop_approval_sla_hrs:'अप्रूवल SLA घंटे',complaint_sla_hrs:'शिकायत SLA घंटे',refund_window_days:'रिफ़ंड विंडो दिन',auto_publish_on_approve:'अप्रूवल पर ख़ुद लाइव',max_categories_per_shop:'प्रति दुकान कैटेगरी सीमा'};
+function policyInner(v){
+ if(v&&typeof v==='object'&&Object.prototype.hasOwnProperty.call(v,'value'))return v.value;
+ return v;
+}
+function viewPolicies(res){
+ var items=(res&&(res.items||res))||[];
+ var editable=isAdmin();
+ return '<div class="infobar">⚙️ platform_policies — '+(editable?
+  'मान सेव करते ही server-side सत्यापक चलता है (अमान्य मान 400)।':
+  'आपकी भूमिका इन्हें सिर्फ़ पढ़ सकती है — बदलने के लिए ADMIN/SUPER_ADMIN चाहिए।')+'</div>'+
+ items.map(function(p){
+  var inner=policyInner(p.value);
+  var val=inner;
+  if(val===true)val='true';else if(val===false)val='false';else if(val===null||val===undefined)val='';
+  return '<div class="card"><div class="rowflex"><div style="flex:1;min-width:0"><b>'+esc(POLICY_HINTS[p.key]||p.label||p.key)+'</b>'+
+  '<div class="mini">'+esc(p.key)+' · अभी: '+esc(typeof inner==='object'?JSON.stringify(inner):String(inner))+
+  (p.updatedAt?' · '+timeAgo(p.updatedAt):'')+'</div>'+
+  (p.description?'<div class="mini">'+esc(p.description)+'</div>':'')+'</div>'+
+  (editable?
+   '<input type="text" style="width:110px;text-align:center" data-pol="'+esc(p.key)+'" value="'+esc(String(val))+'">'+
+   '<button class="btn sm" data-svpol="'+esc(p.key)+'">सेव</button>':
+   '<span class="pill">'+esc(typeof inner==='object'?JSON.stringify(inner):String(inner))+'</span>')+
+  '</div></div>';
+ }).join('');
+}
+function viewAdmins(res){
+ var items=(res&&(res.items||res))||[];
+ return '<button class="btn" id="addAdmin" style="width:100%;margin-bottom:10px">+ नया एडमिन</button>'+
+ items.map(function(a){
+  var own=ME&&a.id===ME.id;
+  var btns=own?'<span class="pill">आप ख़ुद — निष्क्रिय नहीं कर सकते</span>':
+   (a.isActive?'<button class="btn sm amber" data-adm="DISABLE" data-id="'+esc(a.id)+'">🚫 निष्क्रिय करें</button>':
+               '<button class="btn sm soft" data-adm="ENABLE" data-id="'+esc(a.id)+'">चालू करें</button>');
+  btns+='<button class="btn sm soft" data-adm="NEWPWD" data-id="'+esc(a.id)+'">🔑 नया पासवर्ड</button>';
+  return '<div class="card"><div class="rowflex"><div style="flex:1;min-width:0"><b>'+esc(a.name)+'</b>'+
+  '<div class="mini">'+esc(a.email)+' · '+esc(roleLabel(a.role))+' ('+esc(a.role)+')'+(own?' · आप':'')+'</div></div>'+
+  (a.isActive?'<span class="badge b-ok">चालू</span>':'<span class="badge b-x">बंद</span>')+'</div>'+
+  '<div class="row" style="margin-top:8px">'+btns+'</div></div>';
+ }).join('');
+}
+function viewAudit(res){
+ var items=(res&&(res.items||res))||[];
+ return '<div class="infobar">🧾 audit_log — हर एडमिन क्रिया क्रम से (कौन-कब-क्या)।</div>'+
+ '<table><tr><th>क्रिया</th><th>चीज़</th><th>समय</th></tr>'+
+ items.map(function(l){
+  return '<tr><td><b>'+esc(l.action||'')+'</b><br><span class="mini">'+esc(l.adminName||l.name||'')+'</span></td>'+
+  '<td>'+esc(l.entity||'')+((l.entityId||l.entity_id)?'<br><span class="mini">'+esc(String(l.entityId||l.entity_id)).slice(0,14)+'</span>':'')+'</td>'+
+  '<td>'+timeAgo(l.createdAt||l.created_at||l.at)+'</td></tr>';
+ }).join('')+'</table>';
+}
+/* ------------------------------ शीट ------------------------------------- */
+function openSheet(html){
+ var sh=document.createElement('div');sh.className='sheet';
+ sh.innerHTML='<div class="in">'+html+'</div>';document.body.appendChild(sh);return sh;
+}
+function closeSheet(){var sh=document.querySelector('.sheet');if(sh)sh.remove();}
+function complaintSheet(c,d){
+ var hist=(d.history||[]).map(function(h){
+  return '<li><b>'+esc(h.action||'')+'</b>'+(h.from?' · '+esc(h.from)+'→'+esc(h.to||''):'')+(h.note?'<br>'+esc(h.note):'')+
+  '<br><span class="mini">'+timeAgo(h.at)+(h.adminName?' · '+esc(h.adminName):'')+'</span></li>';}).join('')||'<li>— कोई कदम नहीं —</li>';
+ var notes=(d.notes||[]).map(function(n){
+  return '<li>'+(n.isInternal?'<span class="pill">इंटरनल</span> ':'')+esc(n.body)+
+  '<br><span class="mini">'+esc(n.authorName||'')+' · '+timeAgo(n.at)+'</span></li>';}).join('');
+ var acts=d.allowedActions||[],btns='';
+ if(acts.indexOf('START')>-1)btns+='<button class="btn" data-cact="START" style="flex:1">▶ ज़िम्मेदारी लें</button>';
+ if(acts.indexOf('RESOLVE')>-1)btns+='<button class="btn" data-cact="RESOLVE" style="flex:1">✅ हल करें</button>';
+ if(acts.indexOf('CLOSE')>-1)btns+='<button class="btn soft" data-cact="CLOSE" style="flex:1">🔒 बंद करें</button>';
+ if(acts.indexOf('REOPEN')>-1)btns+='<button class="btn amber" data-cact="REOPEN" style="flex:1">↩ दोबारा खोलें</button>';
+ if(btns)btns='<div class="row" style="margin:12px 0 4px">'+btns+'</div>';
+ return '<div class="rowflex"><b style="font-size:16px;flex:1">#'+esc(c.id)+' शिकायत</b>'+complaintBadge(c.status)+'</div>'+
+ '<div class="mini">'+esc(c.shopName||'')+(c.orderRef?' · ऑर्डर '+esc(c.orderRef):'')+
+ (c.customerName?' · '+esc(c.customerName):'')+(c.customerPhone?' · '+esc(c.customerPhone):'')+' · '+timeAgo(c.createdAt)+'</div>'+
+ '<div style="margin:8px 0">'+esc(c.body||'')+'</div>'+
+ (c.resolutionNote?'<div class="card" style="box-shadow:none;background:var(--g50);padding:10px">✅ हल-नोट: '+esc(c.resolutionNote)+'</div>':'')+
+ '<b>इतिहास</b><ul class="hlist">'+hist+'</ul>'+
+ '<b>टिप्पणियाँ</b><ul class="hlist">'+(notes||'<li>— अभी कुछ नहीं —</li>')+'</ul>'+
+ '<label>नई टिप्पणी (इंटरनल)</label><textarea id="cnote" rows="2" placeholder="काम जारी है — क्या किया…"></textarea>'+
+ '<button class="btn sm soft" id="cnoteGo" style="width:100%;margin-top:6px">टिप्पणी जोड़ें</button>'+btns+
+ '<button class="btn sm" style="background:var(--line);color:var(--ink);width:100%;margin-top:12px" id="shClose">बंद करें</button>';
+}
+function openComplaint(id){
+ POSADMIN.api.complaints.detail(id).then(function(d){
+  var c=d.complaint||d;
+  openSheet(complaintSheet(c,d));
+  document.getElementById('shClose').onclick=closeSheet;
+  document.getElementById('cnoteGo').onclick=function(){
+   var b=document.getElementById('cnote').value.trim();
+   if(!b){toast('टिप्पणी लिखें');return;}
+   POSADMIN.api.complaints.note(id,b,true).then(function(){toast('इंटरनल टिप्पणी जुड़ी ✅');openComplaint(id);}).catch(fail);
+  };
+  Array.prototype.forEach.call(document.querySelectorAll('[data-cact]'),function(btn){
+   btn.addEventListener('click',function(){
+    var act=btn.getAttribute('data-cact');
+    var note=document.getElementById('cnote').value.trim();
+    if(act==='RESOLVE'&&!note){toast('हल-नोट ज़रूरी — टिप्पणी फ़िल्ड में लिखें');return;}
+    POSADMIN.api.complaints.act(id,act,act==='RESOLVE'?note:null).then(function(){
+     toast(act==='START'?'ज़िम्मेदारी ली ✅':act==='RESOLVE'?'हल हुई ✅':act==='CLOSE'?'शिकायत बंद ✅':'दोबारा खुली');
+     closeSheet();setTimeout(function(){load();},300);
+    }).catch(fail);
+   });
+  });
+ }).catch(fail);
+}
+/* --------------------------- दुकान का पूरा विवरण -------------------------- */
+function shopDetailSheet(d){
+ var s=(d&&d.shop)||d||{};
+ var cats=Array.isArray(s.categories)?s.categories.join(', '):(s.categories||'');
+ var history=(d&&d.history)||[];
+ var complaints=(d&&d.complaints)||[];
+ var hist=history.map(function(h){
+  return '<li><b>'+esc(h.action||'')+'</b>'+(h.from?' · '+esc(h.from)+'→'+esc(h.to||''):'')+
+  (h.reason?'<br>'+esc(h.reason):'')+'<br><span class="mini">'+timeAgo(h.at)+
+  (h.adminEmail?' · '+esc(h.adminEmail):'')+(h.userName?' · '+esc(h.userName):'')+'</span></li>';
+ }).join('')||'<li>— कोई इतिहास नहीं —</li>';
+ var cmps=complaints.map(function(c){
+  return '<li>#'+esc(c.id)+' · '+esc(c.category||'')+' · '+complaintBadge(c.status)+
+  '<br><span class="mini">'+esc(String(c.body||'').slice(0,100))+' · '+timeAgo(c.createdAt)+'</span></li>';
+ }).join('')||'<li>— कोई शिकायत नहीं —</li>';
+ return '<div class="rowflex"><b style="font-size:16px;flex:1">'+esc(s.name||'दुकान')+'</b>'+badgeSt(s.status)+'</div>'+
+ '<div class="mini">'+esc(s.ownerName||'')+(s.ownerPhone?' · '+esc(s.ownerPhone):'')+'</div>'+
+ '<div class="mini">'+esc(s.address||'')+(s.pincode?' — '+esc(s.pincode):'')+'</div>'+
+ (s.slug?'<div class="mini">🔗 '+esc(s.slug)+'</div>':'')+
+ (cats?'<div class="mini">🏷️ '+esc(cats)+'</div>':'')+
+ (s.licenseNo?'<div class="mini">📜 '+esc(s.licenseNo)+'</div>':'')+
+ (s.description?'<div style="margin:8px 0">'+esc(s.description)+'</div>':'')+
+ '<div class="row" style="margin:8px 0;flex-wrap:wrap">'+
+  '<span class="pill">members: '+esc(String(s.members||0))+'</span>'+
+  (s.status==='APPROVED'?'<span class="pill">'+(s.published?'public':'छिपी')+'</span>':'')+
+  (s.submittedAt?'<span class="pill">submit '+timeAgo(s.submittedAt)+'</span>':'')+
+ '</div>'+
+ (s.reason?'<div class="errbar">कारण: '+esc(s.reason)+'</div>':'')+
+ '<b>स्थिति-इतिहास</b><ul class="hlist">'+hist+'</ul>'+
+ '<b>हाल की शिकायतें</b><ul class="hlist">'+cmps+'</ul>'+
+ '<button class="btn sm" style="background:var(--line);color:var(--ink);width:100%;margin-top:10px" id="shClose">बंद करें</button>';
+}
+function openShop(id){
+ POSADMIN.api.shops.get(id).then(function(d){
+  openSheet(shopDetailSheet(d));
+  document.getElementById('shClose').onclick=closeSheet;
+ }).catch(fail);
+}
+/* ------------------------- REJECT/SUSPEND कारण शीट ----------------------- */
+function askReason(kind,shopId){
+ openSheet('<b>'+(kind==='REJECT'?'रिजेक्ट का कारण':'रोकने का कारण (SUSPEND)')+'</b>'+
+ '<div class="mini">कारण दुकान के इतिहास में जाता है — REJECT पर दुकानदार भी देखता है</div>'+
+ '<textarea id="rz" rows="3" placeholder="अल्प विवरण…"></textarea>'+
+ '<button class="btn red" id="rzGo" style="width:100%;margin-top:10px">कारण सहित आगे</button>'+
+ '<button class="btn sm" style="background:var(--line);color:var(--ink);width:100%;margin-top:8px" id="rzNo">वापस</button>');
+ document.getElementById('rzNo').onclick=closeSheet;
+ document.getElementById('rzGo').onclick=function(){
+  var r=document.getElementById('rz').value.trim();
+  if(!r){toast('कारण ज़रूरी है');return;}
+  POSADMIN.api.shops.setStatus(shopId,kind,r).then(function(){
+   closeSheet();
+   toast(kind==='REJECT'?'रिजेक्ट किया — कारण दुकान को दिखेगा':'दुकान रोकी गई (public से हटी)');
+   setTimeout(function(){load();},300);
+  }).catch(function(e){closeSheet();fail(e);});
+ };
+}
+/* --------------------------- एडमिन-टीम शीट ------------------------------ */
+function askNewPassword(adminId){
+ openSheet('<b>नया पासवर्ड</b><div class="mini">कम से कम 8 अक्षर — hash सर्वर पर बनती है</div>'+
+ '<input id="np1" type="password" placeholder="नया पासवर्ड" style="margin-top:8px">'+
+ '<button class="btn red" id="npGo" style="width:100%;margin-top:10px">पासवर्ड बदलें</button>'+
+ '<button class="btn sm" style="background:var(--line);color:var(--ink);width:100%;margin-top:8px" id="npNo">वापस</button>');
+ document.getElementById('npNo').onclick=closeSheet;
+ document.getElementById('npGo').onclick=function(){
+  var p=document.getElementById('np1').value;
+  if(p.length<8){toast('कम-से-कम 8 अक्षर');return;}
+  POSADMIN.api.admins.patch(adminId,{password:p}).then(function(){toast('पासवर्ड बदला ✅');closeSheet();})
+  .catch(function(e){closeSheet();fail(e);});
+ };
+}
+function askCreateAdmin(){
+ openSheet('<b>नया एडमिन</b>'+
+ '<label>ईमेल</label><input id="nae" type="email" placeholder="name@pos.local">'+
+ '<label>नाम</label><input id="nan" type="text" placeholder="रवि शर्मा">'+
+ '<label>भूमिका</label><select id="nar">'+
+ '<option value="SUPPORT">सपोर्ट — शिकायतें + दुकानें पढ़ने को</option>'+
+ '<option value="ADMIN">एडमिन — दुकानें, पॉलिसी, ऑडिट</option>'+
+ '</select>'+
+ '<label>अस्थायी पासवर्ड</label><input id="nap" type="password" placeholder="कम से कम 8 अक्षर">'+
+ '<button class="btn" id="naGo" style="width:100%;margin-top:12px">बनाएँ</button>'+
+ '<button class="btn sm" style="background:var(--line);color:var(--ink);width:100%;margin-top:8px" id="naNo">वापस</button>');
+ document.getElementById('naNo').onclick=closeSheet;
+ document.getElementById('naGo').onclick=function(){
+  var dto={email:document.getElementById('nae').value.trim(),name:document.getElementById('nan').value.trim(),
+   role:document.getElementById('nar').value,password:document.getElementById('nap').value};
+  if(!dto.email||!dto.name||dto.password.length<8){toast('सारे फ़ील्ड सही भरें (पासवर्ड 8+)');return;}
+  POSADMIN.api.admins.create(dto).then(function(){toast('एडमिन बना ✅');closeSheet();load();})
+  .catch(function(e){closeSheet();fail(e);});
+ };
+}
+/* ---------------------------- login screen ------------------------------ */
+function renderLogin(msg){
+ document.getElementById('head').innerHTML='<b style="flex:1">🛡️ POS एडमिन पैनल</b>';
+ document.getElementById('rail').innerHTML='';
+ document.getElementById('app').innerHTML=
+ '<div class="login-wrap"><div class="login">'+
+ '<h1>🛡️ POS एडमिन पैनल</h1><div class="sub">NestJS backend · scrypt पासवर्ड · सत्र ~12 घंटे</div>'+
+ (msg?'<div class="errbar">'+esc(msg)+'</div>':'')+
+ '<label>ईमेल</label><input id="lemail" type="email" placeholder="admin@pos.local" autocomplete="username">'+
+ '<label>पासवर्ड</label><input id="lpass" type="password" placeholder="••••••••" autocomplete="current-password">'+
+ '<button class="btn" id="lgo" style="width:100%;margin-top:14px">लॉगिन</button>'+
+ '<div class="hint">पहला सुपर-एडमिन backend के ADMIN_EMAIL/ADMIN_PASSWORD env से बनता है;'+
+ ' ग़लत विवरण पर सपष्ट त्रुटि मिलेगी। API base = Settings में set किया URL (न हो तो'+
+ ' मर्चेंट ऐप का pos_api_base)।</div>'+
+ '</div></div>';
+ var go=function(){
+  var em=document.getElementById('lemail').value.trim(),pw=document.getElementById('lpass').value;
+  if(!em||!pw){toast('ईमेल+पासवर्ड दोनों भरें');return;}
+  var b=document.getElementById('lgo');
+  b.disabled=true;b.textContent='जुड़ा जा रहा…';
+  POSADMIN.login(em,pw).then(function(res){ME=res.admin;mount();})
+  .catch(function(e){
+   b.disabled=false;b.textContent='लॉगिन';
+   if(e&&e.http&&e.status===401)toast('ईमेल/पासवर्ड ग़लत है');
+   else fail(e);
+  });
+ };
+ document.getElementById('lgo').onclick=go;
+ document.getElementById('lpass').addEventListener('keydown',function(ev){if(ev.key==='Enter')go();});
+}
+function boot(){
+ if(POSADMIN.isOffline()){renderDemo();return;}
+ POSADMIN.me().then(function(r){ME=r.admin;mount();})   // पुराना सट टोकन (यदि चालू)
+ .catch(function(){ME=null;POSADMIN.logout&&POSADMIN.logout();renderLogin('सत्र जुड़ा नहीं — लॉगिन करें');});
+}
+/* ===================================================================== */
+/*                    एक जगह से सारे click handlers                        */
+/* ===================================================================== */
+document.addEventListener('click',function(ev){
+ var el=ev.target;
+ if(!el||!el.closest)return;
+ // rail tabs (दोनों मोड)
+ var rt=el.closest('.rt');
+ if(rt){CUR=rt.getAttribute('data-t');POSADMIN.isOffline()?renderDemo():goto(CUR);return;}
+ // डैशबोर्ड कार्य-सूची कूद
+ var tab=el.closest('[data-tab]');
+ if(tab){goto(tab.getAttribute('data-tab'));return;}
+ // बाहर लॉग-आउट
+ if(el.closest('[data-logout]')){POSADMIN.logout();ME=null;CUR='डैशबोर्ड';renderLogin();return;}
+ // त्रुटि-स्क्रीन फिर कोशिश
+ if(el.closest('[data-reload]')){load();return;}
+
+ /* ---------------- डेमो क्रियाएँ ---------------- */
+ if(POSADMIN.isOffline()){
+  var da=el.closest('[data-demo-acc],[data-demo-rej],#polSave');
+  if(!da)return;
+  if(da.hasAttribute('data-demo-acc')){
+   var s=ADB.shops.filter(function(x){return x.id===da.getAttribute('data-demo-acc');})[0];
+   if(s){s.status='APPROVED';persistDemo();toast(s.name+' अप्रूव हुई ✅ (डेमो)');renderDemo();}
+   return;
+  }
+  if(da.hasAttribute('data-demo-rej')){
+   var sb=ADB.shops.filter(function(x){return x.id===da.getAttribute('data-demo-rej');})[0];
+   if(sb){sb.status='REJECTED';persistDemo();toast(sb.name+' रिजेक्ट (डेमो)');renderDemo();}
+   return;
+  }
+  if(da.id==='polSave'){
+   ADB.policy.commission_default_pct=Number(document.getElementById('pc').value)||0;
+   ADB.policy.cod_max_order=Number(document.getElementById('pcod').value)||0;
+   ADB.policy.complaint_sla_hrs=Number(document.getElementById('psla').value)||0;
+   persistDemo();toast('पॉलिसी सेव (डेमो) ✅');renderDemo();return;
+  }
+  return;
+ }
+
+ /* ---------------- सर्वर क्रियाएँ ---------------- */
+ var dview=el.closest('[data-shop]');
+ if(dview){openShop(dview.getAttribute('data-shop'));return;}
+ var dshop=el.closest('[data-sh]');
+ if(dshop){
+  var act=dshop.getAttribute('data-sh'),sid=dshop.getAttribute('data-id');
+  if(act==='APPROVE'||act==='UNSUSPEND'){
+   POSADMIN.api.shops.setStatus(sid,act).then(function(res){
+    var pub=!(res&&res.published===false);
+    toast(act==='APPROVE'?(pub?'दुकान अप्रूव — अब public ✅':'दुकान अप्रूव — auto-publish बंद है, public नहीं'):'दुकान दोबारा चालू ✅');
+    setTimeout(function(){load();},300);
+   }).catch(fail);
+  }else{askReason(act,sid);}   /* REJECT/SUSPEND — कारण से */
+  return;
+ }
+ var dpub=el.closest('[data-pub]');
+ if(dpub){
+  var pid=dpub.getAttribute('data-id'),makePublic=dpub.getAttribute('data-pub')==='1';
+  POSADMIN.api.shops.setPublished(pid,makePublic).then(function(){
+   toast(makePublic?'दुकान public हो गई ✅':'दुकान public से हटी — URL अब 404');
+   setTimeout(function(){load();},300);
+  }).catch(fail);
+  return;
+ }
+ var cmp=el.closest('[data-cmp]');
+ if(cmp){openComplaint(cmp.getAttribute('data-cmp'));return;}
+ var sv=el.closest('[data-svpol]');
+ if(sv){
+  if(!isAdmin()){toast('पॉलिसी बदलने की अनुमति नहीं');return;}
+  var pk=sv.getAttribute('data-svpol');
+  var inp=document.querySelector('[data-pol="'+pk+'"]');
+  var raw=(inp&&inp.value!=null?inp.value:'').trim(),v;
+  if(raw==='true')v=true;
+  else if(raw==='false')v=false;
+  else if(raw!==''&&!isNaN(Number(raw)))v=Number(raw);
+  else v=raw;
+  if(raw===''){toast('मान लिखें');return;}
+  POSADMIN.api.policies.patch(pk,v).then(function(){
+   toast('पॉलिसी सुरक्षित ✅');setTimeout(function(){load();},300);
+  }).catch(fail);
+  return;
+ }
+ if(el.closest('#ogo')){
+  var oq=document.getElementById('oq'),ost=document.getElementById('ost');
+  ORD_Q=oq?oq.value.trim():'';
+  ORD_STATUS=ost?ost.value:'';
+  load();
+  return;
+ }
+ if(el.closest('#comSave')){
+  if(!isAdmin()){toast('कमीशन बदलने की अनुमति नहीं');return;}
+  var pctEl=document.getElementById('comPct');
+  var pct=Number(pctEl?pctEl.value:'');
+  if(!isFinite(pct)||pct<0||pct>30){toast('कमीशन 0…30 के बीच');return;}
+  POSADMIN.api.commissions.saveDefault(pct).then(function(){
+   toast('डिफ़ॉल्ट कमीशन सेव ✅');setTimeout(function(){load();},300);
+  }).catch(fail);
+  return;
+ }
+ if(el.closest('#fgo')){
+  var fq=document.getElementById('fq'),fs=document.getElementById('fstatus');
+  SHOP_Q=fq?fq.value.trim():'';
+  SHOP_STATUS=fs?fs.value:'';
+  load();
+  return;
+ }
+ if(el.closest('#cgo')){
+  var cq=document.getElementById('cq'),cs=document.getElementById('cst');
+  CMP_Q=cq?cq.value.trim():'';
+  CMP_STATUS=cs?cs.value:'';
+  load();
+  return;
+ }
+ if(el.closest('#addAdmin')){askCreateAdmin();return;}
+ var adm=el.closest('[data-adm]');
+ if(adm){
+  var ka=adm.getAttribute('data-adm'),kid=adm.getAttribute('data-id');
+  if(ka==='ENABLE'){
+   POSADMIN.api.admins.patch(kid,{isActive:true}).then(function(){toast('चालू किया ✅');setTimeout(function(){load();},300);}).catch(fail);
+  }else if(ka==='DISABLE'){
+   POSADMIN.api.admins.patch(kid,{isActive:false}).then(function(){
+    toast('निष्क्रिय — उसका अगला request 401 पाएगा');setTimeout(function(){load();},300);
+   }).catch(fail);
+  }else if(ka==='NEWPWD'){askNewPassword(kid);}
+  return;
+ }
+});
+boot();
+</script>
+</body>
+</html>
